@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Park Tab",
+  "description": "轻量、多设备友好的标签页管理插件。",
+  "version": "0.1.0",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Park Tab"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_page": "options.html",
+  "permissions": ["alarms", "contextMenus", "storage", "tabs", "favicon"],
+  "host_permissions": ["<all_urls>"],
+  "commands": {
+    "save-current-window": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "保存当前窗口标签页"
+    }
+  }
+}
