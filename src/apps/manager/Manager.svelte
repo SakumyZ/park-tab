@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { fly } from 'svelte/transition'
   import Icon from '../../lib/components/Icon.svelte'
   import { sendMessage } from '../../lib/runtime'
   import { activeGroups, sortOrderFromIndex, tabsForGroup } from '../../lib/storage'
@@ -811,38 +812,7 @@
     {#if query.trim()}
       <p class="mb-3 text-xs text-muted">搜索结果视图下已禁用拖拽，清空搜索后可调整顺序。</p>
     {/if}
-    {#if status}
-      <div
-        class="mb-3 flex items-center gap-3 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800"
-      >
-        <p class="min-w-0 flex-1 truncate">{status}</p>
-        <button
-          class="inline-flex h-5 w-5 items-center justify-center rounded text-current opacity-70 transition hover:bg-green-100 hover:opacity-100"
-          type="button"
-          aria-label="关闭提示"
-          title="关闭提示"
-          on:click={() => dismissAlert('status')}
-        >
-          <Icon name="x" className="h-4 w-4" />
-        </button>
-      </div>
-    {/if}
-    {#if error}
-      <div
-        class="mb-3 flex items-center gap-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
-      >
-        <p class="min-w-0 flex-1 truncate">{error}</p>
-        <button
-          class="inline-flex h-5 w-5 items-center justify-center rounded text-current opacity-70 transition hover:bg-red-100 hover:opacity-100"
-          type="button"
-          aria-label="关闭错误提示"
-          title="关闭错误提示"
-          on:click={() => dismissAlert('error')}
-        >
-          <Icon name="x" className="h-4 w-4" />
-        </button>
-      </div>
-    {/if}
+
 
     {#if !data}
       <p class="text-sm text-muted">加载中...</p>
@@ -1063,3 +1033,54 @@
     {/if}
   </div>
 </main>
+
+<!-- 悬浮全局通知消息 (Antd Message 风格)，避免标准流占位导致页面跳动，方便连续操作 -->
+<div class="fixed top-6 left-1/2 z-[9999] -translate-x-1/2 flex flex-col gap-3 pointer-events-none w-full max-w-sm px-4">
+  <!-- 条件分支：当 status 存在时，渲染成功提示 Message -->
+  {#if status}
+    <!-- 引入 transition:fly 增加自上而下滑入与淡出动画 -->
+    <div
+      transition:fly={{ y: -20, duration: 150 }}
+      class="pointer-events-auto flex items-center gap-2.5 rounded-lg border border-slate-100 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-md"
+    >
+      <!-- 绿色的成功勾号图标 -->
+      <svg class="h-5 w-5 text-green-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span class="min-w-0 flex-1 text-sm font-medium text-slate-700 truncate">{status}</span>
+      <button
+        class="inline-flex h-5 w-5 items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
+        type="button"
+        aria-label="关闭提示"
+        title="关闭提示"
+        on:click={() => dismissAlert('status')}
+      >
+        <Icon name="x" className="h-4 w-4" />
+      </button>
+    </div>
+  {/if}
+
+  <!-- 条件分支：当 error 存在时，渲染错误提示 Message -->
+  {#if error}
+    <!-- 引入 transition:fly 增加自上而下滑入与淡出动画 -->
+    <div
+      transition:fly={{ y: -20, duration: 150 }}
+      class="pointer-events-auto flex items-center gap-2.5 rounded-lg border border-slate-100 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-md"
+    >
+      <!-- 红色的错误感叹号图标 -->
+      <svg class="h-5 w-5 text-red-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span class="min-w-0 flex-1 text-sm font-medium text-slate-700 truncate">{error}</span>
+      <button
+        class="inline-flex h-5 w-5 items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
+        type="button"
+        aria-label="关闭错误提示"
+        title="关闭错误提示"
+        on:click={() => dismissAlert('error')}
+      >
+        <Icon name="x" className="h-4 w-4" />
+      </button>
+    </div>
+  {/if}
+</div>
